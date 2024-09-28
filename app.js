@@ -1,9 +1,20 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import contactsRouter from "./routes/contactsRouter.js";
 import dotenv from "dotenv";
-import { router } from "./routes/auth.js";
+import eventRoutes from "./routes/eventsRoutes.js";
+import participantRoutes from "./routes/participantsRoutes.js";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "swagger.json"), "utf-8")
+);
 
 dotenv.config();
 
@@ -12,11 +23,12 @@ const app = express();
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"))
+app.use(express.static("public"));
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/api/users", router);
-app.use("/api/contacts", contactsRouter);
+app.use("/api/events", eventRoutes);
+app.use("/api/participants", participantRoutes);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
