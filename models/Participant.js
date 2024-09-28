@@ -1,8 +1,8 @@
+// models/Participant.js
 import mongoose from "mongoose";
 import Joi from "joi";
 
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const dateRegexp = /^\d{4}-\d{2}-\d{2}$/;
 
 const participantSchema = new mongoose.Schema(
   {
@@ -19,9 +19,8 @@ const participantSchema = new mongoose.Schema(
       match: emailRegexp,
     },
     dateOfBirth: {
-      type: String,
+      type: Date, // Зміна типу на Date
       required: true,
-      match: dateRegexp,
     },
     heardFrom: {
       type: String,
@@ -43,9 +42,7 @@ export const participantRegistrationSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required().messages({
     "string.pattern.base": "Email must be a valid email address",
   }),
-  dateOfBirth: Joi.string().pattern(dateRegexp).required().messages({
-    "string.pattern.base": "Date of Birth must be in the format YYYY-MM-DD",
-  }),
+  dateOfBirth: Joi.date().required(), // Зміна на Joi.date()
   heardFrom: Joi.string().required(),
   event: Joi.string().required(),
 });
@@ -55,9 +52,7 @@ export const participantUpdateSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).optional().messages({
     "string.pattern.base": "Email must be a valid email address",
   }),
-  dateOfBirth: Joi.string().pattern(dateRegexp).optional().messages({
-    "string.pattern.base": "Date of Birth must be in the format YYYY-MM-DD",
-  }),
+  dateOfBirth: Joi.date().optional(), // Зміна на Joi.date()
   heardFrom: Joi.string().optional(),
   event: Joi.string().optional(),
 });

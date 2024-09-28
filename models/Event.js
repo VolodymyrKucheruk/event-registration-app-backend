@@ -1,7 +1,6 @@
+// models/Event.js
 import mongoose from "mongoose";
 import Joi from "joi";
-
-const dateTimeRegexp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
 export const eventSchema = new mongoose.Schema(
   {
@@ -18,9 +17,8 @@ export const eventSchema = new mongoose.Schema(
       maxlength: 1000,
     },
     eventDate: {
-      type: String,
+      type: Date, // Зміна типу на Date
       required: true,
-      match: dateTimeRegexp,
     },
     organizer: {
       type: String,
@@ -34,15 +32,11 @@ export const eventSchema = new mongoose.Schema(
   }
 );
 
-
 export const eventSchemaValidation = Joi.object({
   title: Joi.string().min(3).max(100).required(),
   description: Joi.string().min(10).max(1000).required(),
-  eventDate: Joi.string().pattern(dateTimeRegexp).required().messages({
-    "string.pattern.base": "Event date must be in the format YYYY-MM-DD HH:mm",
-  }),
+  eventDate: Joi.date().required(), // Зміна на Joi.date()
   organizer: Joi.string().min(3).max(100).required(),
 });
 
 export const Event = mongoose.model("Event", eventSchema);
-
