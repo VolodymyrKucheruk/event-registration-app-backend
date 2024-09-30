@@ -1,4 +1,3 @@
-// models/Participant.js
 import mongoose from "mongoose";
 import Joi from "joi";
 
@@ -19,7 +18,7 @@ const participantSchema = new mongoose.Schema(
       match: emailRegexp,
     },
     dateOfBirth: {
-      type: Date, // Зміна типу на Date
+      type: Date,
       required: true,
     },
     heardFrom: {
@@ -42,7 +41,7 @@ export const participantRegistrationSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).required().messages({
     "string.pattern.base": "Email must be a valid email address",
   }),
-  dateOfBirth: Joi.date().required(), // Зміна на Joi.date()
+  dateOfBirth: Joi.date().required(),
   heardFrom: Joi.string().required(),
   event: Joi.string().required(),
 });
@@ -52,7 +51,7 @@ export const participantUpdateSchema = Joi.object({
   email: Joi.string().pattern(emailRegexp).optional().messages({
     "string.pattern.base": "Email must be a valid email address",
   }),
-  dateOfBirth: Joi.date().optional(), // Зміна на Joi.date()
+  dateOfBirth: Joi.date().optional(),
   heardFrom: Joi.string().optional(),
   event: Joi.string().optional(),
 });

@@ -1,4 +1,4 @@
-// models/Event.js
+
 import mongoose from "mongoose";
 import Joi from "joi";
 
@@ -17,7 +17,7 @@ export const eventSchema = new mongoose.Schema(
       maxlength: 1000,
     },
     eventDate: {
-      type: Date, // Зміна типу на Date
+      type: Date,
       required: true,
     },
     organizer: {
@@ -35,7 +35,7 @@ export const eventSchema = new mongoose.Schema(
 export const eventSchemaValidation = Joi.object({
   title: Joi.string().min(3).max(100).required(),
   description: Joi.string().min(10).max(1000).required(),
-  eventDate: Joi.date().required(), // Зміна на Joi.date()
+  eventDate: Joi.date().required(),
   organizer: Joi.string().min(3).max(100).required(),
 });
 

@@ -3,18 +3,58 @@ import HttpError from "../helpers/HttpError.js";
 
 export const getEvents = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const events = await Event.find()
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "title",
+      order = "asc",
+      title,
+      organizer,
+      eventDateFrom,
+      eventDateTo,
+    } = req.query;
+
+    const query = {};
+
+    if (title) {
+      query.title = { $regex: title, $options: "i" };
+    }
+
+    if (organizer) {
+      query.organizer = { $regex: organizer, $options: "i" };
+    }
+
+    if (eventDateFrom || eventDateTo) {
+      query.eventDate = {};
+      if (eventDateFrom) {
+        query.eventDate.$gte = new Date(eventDateFrom);
+      }
+      if (eventDateTo) {
+        query.eventDate.$lte = new Date(eventDateTo);
+      }
+    }
+
+    const sortOptions = {};
+    const sortFields = ["title", "eventDate", "organizer"];
+
+    if (sortFields.includes(sortBy)) {
+      sortOptions[sortBy] = order === "asc" ? 1 : -1;
+    } else {
+      sortOptions["title"] = 1;
+    }
+
+    const events = await Event.find(query)
+      .sort(sortOptions)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
 
-    const count = await Event.countDocuments();
+    const count = await Event.countDocuments(query);
 
     res.status(200).json({
       events,
       totalPages: Math.ceil(count / limit),
-      currentPage: page,
+      currentPage: Number(page),
     });
   } catch (error) {
     next(HttpError(500, error.message));
